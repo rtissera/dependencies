@@ -160,6 +160,7 @@ jobs:
 
   create-release:
     name: "📤 Create Release"
+    if: github.ref == 'refs/heads/master'
     needs: [build-windows, build-macos, build-linux-x64, build-linux-cross, build-sources]
     runs-on: ubuntu-latest
     steps:
