@@ -132,9 +132,35 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
+  build-sources:
+    name: "📝 Sources"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 240
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install Packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget zip
+
+    - name: Download Sources
+      run: ./download-sources.sh
+
+    - name: Create Archive
+      run: zip -r deps-sources.zip deps-build
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: deps-sources
+        path: deps-sources.zip
+        compression-level: 0
+        if-no-files-found: error
+
   create-release:
     name: "📤 Create Release"
-    needs: [build-windows, build-macos, build-linux-x64, build-linux-cross]
+    needs: [build-windows, build-macos, build-linux-x64, build-linux-cross, build-sources]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -162,4 +188,5 @@ jobs:
           artifacts/deps-macos-universal/deps-macos-universal.tar.xz \
           artifacts/deps-linux-x64/deps-linux-x64.tar.xz \
           artifacts/deps-linux-cross-arm64/deps-linux-cross-arm64.tar.xz \
-          artifacts/deps-linux-cross-armhf/deps-linux-cross-armhf.tar.xz
+          artifacts/deps-linux-cross-armhf/deps-linux-cross-armhf.tar.xz \
+          artifacts/deps-sources/deps-sources.zip
