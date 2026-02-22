@@ -29,8 +29,8 @@ jobs:
     - name: Create Archives
       shell: cmd
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-x64.zip deps-x64
-        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-arm64.zip deps-arm64
+        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-x64.zip windows-x64
+        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-arm64.zip windows-arm64
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v6
@@ -53,10 +53,10 @@ jobs:
       run: sudo xcode-select -s /Applications/Xcode_26.0.app
 
     - name: Build Dependencies
-      run: ./build-dependencies-mac.sh "$HOME/duckstation-deps"
+      run: ./build-dependencies-mac.sh macos-universal
 
     - name: Create Archive
-      run: tar -C "$HOME" -cJf deps-macos-universal.tar.xz duckstation-deps
+      run: tar -cJf deps-macos-universal.tar.xz macos-universal
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v6
@@ -77,13 +77,13 @@ jobs:
       run: ./install-packages-linux.sh
 
     - name: Build Dependencies
-      run: ./build-dependencies-linux.sh "$HOME/duckstation-deps"
+      run: ./build-dependencies-linux.sh linux-x64
 
     - name: Build FFmpeg
-      run: ./build-ffmpeg-linux.sh "$HOME/duckstation-deps"
+      run: ./build-ffmpeg-linux.sh linux-x64
 
     - name: Create Archive
-      run: tar -C "$HOME" -cJf deps-linux-x64.tar.xz duckstation-deps
+      run: tar -cJf deps-linux-x64.tar.xz linux-x64
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v6
@@ -115,14 +115,14 @@ jobs:
 
     - name: Extract x64 Artifact
       run: |
-        tar -C "$HOME" -xvf deps-linux-x64/deps-linux-x64.tar.xz
+        tar -xvf deps-linux-x64/deps-linux-x64.tar.xz
 
     - name: Build Dependencies
       run: |
-        ./build-dependencies-linux-cross.sh "$HOME/duckstation-deps" "${{ matrix.arch }}" "/${{ matrix.arch }}-chroot" "$HOME/duckstation-deps-${{matrix.arch}}"
+        ./build-dependencies-linux-cross.sh "linux-x64" "${{ matrix.arch }}" "/${{ matrix.arch }}-chroot" "linux-cross-${{matrix.arch}}"
 
     - name: Create Archive
-      run: tar -C "$HOME" -cJf deps-linux-cross-${{ matrix.arch }}.tar.xz duckstation-deps-${{matrix.arch}}
+      run: tar -cJf "deps-linux-cross-${{ matrix.arch }}.tar.xz" "linux-cross-${{matrix.arch}}"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v6

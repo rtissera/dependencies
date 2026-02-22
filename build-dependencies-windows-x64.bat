@@ -36,8 +36,8 @@ mkdir deps-build
 cd deps-build || goto error
 set "BUILDDIR=%CD%"
 cd ..
-mkdir deps-x64
-cd deps-x64 || goto error
+mkdir windows-x64
+cd windows-x64 || goto error
 set "INSTALLDIR=%CD%"
 popd
 

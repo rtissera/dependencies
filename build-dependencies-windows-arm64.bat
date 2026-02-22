@@ -36,11 +36,11 @@ mkdir deps-build
 cd deps-build || goto error
 set "BUILDDIR=%CD%"
 cd ..
-mkdir deps-arm64
-cd deps-arm64 || goto error
+mkdir windows-arm64
+cd windows-arm64 || goto error
 set "INSTALLDIR=%CD%"
 cd ..
-cd deps-x64 || goto error
+cd windows-x64 || goto error
 set "X64INSTALLDIR=%CD%"
 cd ..
 popd
