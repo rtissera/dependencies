@@ -29,16 +29,16 @@ jobs:
     - name: Create Archives
       shell: cmd
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-x64.zip windows-x64
-        "C:\Program Files\7-Zip\7z.exe" a -mx9 -r deps-windows-arm64.zip windows-arm64
+        "C:\Program Files\7-Zip\7z.exe" a -r deps-windows-x64.7z windows-x64
+        "C:\Program Files\7-Zip\7z.exe" a -r deps-windows-arm64.7z windows-arm64
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v6
       with:
         name: deps-windows
         path: |
-          deps-windows-x64.zip
-          deps-windows-arm64.zip
+          deps-windows-x64.7z
+          deps-windows-arm64.7z
         compression-level: 0
         if-no-files-found: error
 
@@ -184,8 +184,8 @@ jobs:
         gh release create "$TAG" \
           --title "$TAG" \
           --notes "Dependencies built on $(date +'%Y-%m-%d') from commit ${{ github.sha }}." \
-          artifacts/deps-windows/deps-windows-x64.zip \
-          artifacts/deps-windows/deps-windows-arm64.zip \
+          artifacts/deps-windows/deps-windows-x64.7z \
+          artifacts/deps-windows/deps-windows-arm64.7z \
           artifacts/deps-macos-universal/deps-macos-universal.tar.xz \
           artifacts/deps-linux-x64/deps-linux-x64.tar.xz \
           artifacts/deps-linux-cross-arm64/deps-linux-cross-arm64.tar.xz \
