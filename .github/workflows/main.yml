@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 jobs:
   build-linux-x64:
@@ -46,6 +47,9 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/rtissera/cross-build-riscv64:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     timeout-minutes: 240
     steps:
     - uses: actions/checkout@v6
