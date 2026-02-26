@@ -132,6 +132,41 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
+  build-linux-riscv64:
+    name: "🐧 Linux riscv64"
+    needs: build-linux-x64
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/rtissera/cross-build-riscv64:latest
+    timeout-minutes: 240
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Download x64 Artifact
+      uses: actions/download-artifact@v6
+      with:
+        name: deps-linux-x64
+        path: ./deps-linux-x64
+
+    - name: Extract x64 Artifact
+      run: |
+        tar -xvf deps-linux-x64/deps-linux-x64.tar.xz
+
+    - name: Build Dependencies
+      run: |
+        ./build-dependencies-linux-cross.sh -skip-qt "linux-x64" "riscv64" "/riscv64-chroot" "linux-cross-riscv64"
+
+    - name: Create Archive
+      run: tar -cJf "deps-linux-cross-riscv64.tar.xz" "linux-cross-riscv64"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: deps-linux-cross-riscv64
+        path: deps-linux-cross-riscv64.tar.xz
+        compression-level: 0
+        if-no-files-found: error
+
   build-sources:
     name: "📝 Sources"
     runs-on: ubuntu-22.04
@@ -161,7 +196,7 @@ jobs:
   create-release:
     name: "📤 Create Release"
     if: github.ref == 'refs/heads/master'
-    needs: [build-windows, build-macos, build-linux-x64, build-linux-cross, build-sources]
+    needs: [build-windows, build-macos, build-linux-x64, build-linux-cross, build-linux-riscv64, build-sources]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -190,4 +225,5 @@ jobs:
           artifacts/deps-linux-x64/deps-linux-x64.tar.xz \
           artifacts/deps-linux-cross-arm64/deps-linux-cross-arm64.tar.xz \
           artifacts/deps-linux-cross-armhf/deps-linux-cross-armhf.tar.xz \
+          artifacts/deps-linux-cross-riscv64/deps-linux-cross-riscv64.tar.xz \
           artifacts/deps-sources/deps-sources.zip

@@ -20,6 +20,10 @@ for arg in "$@"; do
     echo "Only downloading sources."
     ONLY_DOWNLOAD=true
     shift
+  elif [ "$arg" == "-skip-qt" ]; then
+    echo "Skipping Qt builds."
+    SKIP_QT=true
+    shift
   fi
 done
 
@@ -55,6 +59,10 @@ elif [ "$CROSSARCH" == "armhf" ]; then
   CROSSSYSARCH="armhf"
   CROSSTRIPLET="arm-linux-gnueabihf"
   CMAKEPROCESSOR="armv7-a"
+elif [ "$CROSSARCH" == "riscv64" ]; then
+  CROSSSYSARCH="riscv64"
+  CROSSTRIPLET="riscv64-linux-gnu"
+  CMAKEPROCESSOR="riscv64"
 else
   echo "Unknown cross arch $CROSSARCH"
   exit 1
@@ -287,6 +295,8 @@ ninja -C build install
 cd ..
 rm -fr "SDL3-$SDL3"
 
+if [ "$SKIP_QT" != true ]; then
+
 # Couple notes:
 # -fontconfig is needed otherwise Qt Widgets render only boxes.
 # -qt-doubleconversion avoids a dependency on libdouble-conversion.
@@ -368,6 +378,8 @@ cmake --build . --parallel
 ninja install
 cd ../../
 rm -fr "qttranslations-everywhere-src-$QT"
+
+fi # SKIP_QT
 
 echo "Building shaderc..."
 rm -fr "shaderc-$SHADERC_COMMIT"
